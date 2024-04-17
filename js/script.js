@@ -77,21 +77,27 @@ const openReport = () => {
 // Навешиваем событие на документ, которое закроет окно при клике на крестик или вмне отчета
 document.addEventListener('click', closeReport);
 };
+// Ф-я меняет формат даты
+const reformatDate = (dateStr) => {
+    const [year, month, day] = dateStr.split('-');
+    return `${day.padStart(2, "0")}.${month.padStart(2, "0")}.${year}`
+};
+
 // Ф-я отрисовывает таблицу на основе данных
 const renderReport = (data) => {
-    reportOperationList.textContent = 'Загрузка...';
+    reportOperationList.textContent = '';
 
     // Формируем таблицу (перебираем операции и строим строки в таблице)
-    const reportRows = data.map((operation) => {
+    const reportRows = data.map(({category, amount, description, date, type}) => {
         const reportRow = document.createElement('tr');
         reportRow.classList.add('report__row');
 
         reportRow.innerHTML = `
-        <td class="report__cell">Продукты питания</td>
-        <td class="report__cell">1000</td>
-        <td class="report__cell">Магазин Spar</td>
-        <td class="report__cell">01.01.2021</td>
-        <td class="report__cell">расход</td>
+        <td class="report__cell">${category}</td>
+        <td class="report__cell">${amount.toLocaleString()} ₽</td>
+        <td class="report__cell">${description}</td>
+        <td class="report__cell">${reformatDate(date)}</td>
+        <td class="report__cell">${type}</td>
         <td class="report__action-cell">
             <button
             class="report__button report__button_table">&#10006;</button>
@@ -100,6 +106,7 @@ const renderReport = (data) => {
 
         return reportRow;
     });
+    // Передаем их без фигурных скобок (просто через запятую) с помощью спред оператора
     reportOperationList.append(...reportRows);
 };
 
@@ -113,5 +120,3 @@ financeReport.addEventListener('click', async () => {
     // После получения данных с сервера вызовем ф-ю 
     renderReport(data);
 });
-
-
