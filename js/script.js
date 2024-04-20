@@ -4,6 +4,12 @@ import {OverlayScrollbars} from './overlayscrollbars.esm.min.js';
 
 const API_URL = 'https://deluxe-meadow-trumpet.glitch.me/api'
 
+// Получаем тип операции в виде объекта
+const typesOperation = {
+    income: 'Доход',
+    expenses: 'Расход'
+};
+
 // Получаем форму по классу
 const financeForm = document.querySelector('.finance__form');
 // Получим итоговое значение
@@ -14,6 +20,8 @@ const financeReport = document.querySelector('.finance__report');
 const report = document.querySelector('.report');
 // Получаем tbody по классу
 const reportOperationList = document.querySelector('.report__operation-list');
+// Получаем форму с началом и концом даты
+const reportDates = document.querySelector('.report__dates');
 
 let amount = 0;
 
@@ -79,25 +87,30 @@ document.addEventListener('click', closeReport);
 };
 // Ф-я меняет формат даты
 const reformatDate = (dateStr) => {
+    // Разбиваем дату на несколько частей
     const [year, month, day] = dateStr.split('-');
+    // Возвращаем дату в нужном формате (дд.мм.год)
+    // padStart добавляет 0 если цифра однозначная
     return `${day.padStart(2, "0")}.${month.padStart(2, "0")}.${year}`
 };
 
 // Ф-я отрисовывает таблицу на основе данных
 const renderReport = (data) => {
+    // Очищаем табличку
     reportOperationList.textContent = '';
 
     // Формируем таблицу (перебираем операции и строим строки в таблице)
+    // data.map принимает деструктурированный объект operation
     const reportRows = data.map(({category, amount, description, date, type}) => {
         const reportRow = document.createElement('tr');
         reportRow.classList.add('report__row');
 
         reportRow.innerHTML = `
         <td class="report__cell">${category}</td>
-        <td class="report__cell">${amount.toLocaleString()} ₽</td>
+        <td class="report__cell" style="text-align: right">${amount.toLocaleString()}&nbsp;₽</td>
         <td class="report__cell">${description}</td>
         <td class="report__cell">${reformatDate(date)}</td>
-        <td class="report__cell">${type}</td>
+        <td class="report__cell">${typesOperation[type]}</td>
         <td class="report__action-cell">
             <button
             class="report__button report__button_table">&#10006;</button>
@@ -118,5 +131,28 @@ financeReport.addEventListener('click', async () => {
     const data = await getData('/test');
     console.log('data: ', data);
     // После получения данных с сервера вызовем ф-ю 
+    renderReport(data);
+});
+// Навешиваем слушатель события на форму с периодом даты
+reportDates.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const formData = Object.fromEntries(new FormData(reportDates));
+
+    const searchParams = new URLSearchParams();
+
+    if (formData.startDate) {
+        searchParams.append('startDate', formData.startDate);
+    }
+
+    if (formData.endDate) {
+        searchParams.append('endDate', formData.endDate);
+    }
+
+    const queryString = searchParams.toString();
+
+    const url = queryString ? `/test?${queryString}` : '/test'
+
+    const data = await getData(url);
     renderReport(data);
 });
