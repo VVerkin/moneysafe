@@ -73,7 +73,7 @@ const getData = async (url) => {
 const closeReport = ({target}) => {
     // окно закрывается при нажатии на крестик или вне окна.
     if (target.closest('.report__close') || (!target.closest('.report') && target !== financeReport)) {
-    report.classList.remove('report__open');
+    // report.classList.remove('report__open');
     // Убираем событие с документа, что бы оно не висело и не остлеживало клики
     document.removeEventListener('click', closeReport);
     }
@@ -81,7 +81,7 @@ const closeReport = ({target}) => {
 
 // Ф-я открывает отчет
 const openReport = () => {
-    report.classList.add('report__open');
+    // report.classList.add('report__open');
 // Навешиваем событие на документ, которое закроет окно при клике на крестик или вмне отчета
 document.addEventListener('click', closeReport);
 };
@@ -125,13 +125,19 @@ const renderReport = (data) => {
 
 // Навешиваем событие на клик по кнопке "отчет"
 financeReport.addEventListener('click', async () => {
-    openReport();
+    const textContent = financeReport.textContent;
+    // На время загрузки вставляем прелоадер
+    financeReport.textContent = 'Загрузка...';
+    financeReport.disabled = true;
     // Ф-я делает запрос к серверу
     // getData - асинхронная ф-я, поэтому нужно дождаться данных (пишем await)
     const data = await getData('/test');
-    console.log('data: ', data);
+    financeReport.textContent = textContent;
+    financeReport.disabled = false;
     // После получения данных с сервера вызовем ф-ю 
     renderReport(data);
+    // Сначала получили все данные, затем открываем отчет
+    openReport();
 });
 // Навешиваем слушатель события на форму с периодом даты
 reportDates.addEventListener('submit', async (e) => {
