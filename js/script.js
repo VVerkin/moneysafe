@@ -73,6 +73,14 @@ const getData = async (url) => {
 const closeReport = ({target}) => {
     // окно закрывается при нажатии на крестик или вне окна.
     if (target.closest('.report__close') || (!target.closest('.report') && target !== financeReport)) {
+    // Делаем анимацию закрытия отчета через gsap
+    gsap.to(report, {
+        opacity: 0,
+        scale: 0,
+        duration: 0.5,
+        easy: 'elastic.in'
+    });
+
     // report.classList.remove('report__open');
     // Убираем событие с документа, что бы оно не висело и не остлеживало клики
     document.removeEventListener('click', closeReport);
@@ -81,6 +89,17 @@ const closeReport = ({target}) => {
 
 // Ф-я открывает отчет
 const openReport = () => {
+    // Берем элемент "отчет" и меняем у него стили
+    report.style.visibility = 'visible';
+    // Делаем анимацию открытия отчета через gsap
+    gsap.to(report, {
+        opacity: 1,
+        scale: 1,
+        duration: 0.5,
+        easy: 'elastic.out'
+    });
+
+
     // report.classList.add('report__open');
 // Навешиваем событие на документ, которое закроет окно при клике на крестик или вмне отчета
 document.addEventListener('click', closeReport);
