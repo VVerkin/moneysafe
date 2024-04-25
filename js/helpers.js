@@ -11,3 +11,12 @@ export const convertStringNumber = (str) => {
         return false;
     }
 };
+
+// Ф-я меняет формат даты
+export const reformatDate = (dateStr) => {
+    // Разбиваем дату на несколько частей
+    const [year, month, day] = dateStr.split('-');
+    // Возвращаем дату в нужном формате (дд.мм.год)
+    // padStart добавляет 0 если цифра однозначная
+    return `${day.padStart(2, "0")}.${month.padStart(2, "0")}.${year}`
+};
