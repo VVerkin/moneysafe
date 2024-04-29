@@ -15,6 +15,12 @@ export const financeControl = () => {
         e.preventDefault();
         // Определяем тип операции (нажатие на "-" - expenses, на "+" - income)
         const typeOperation = e.submitter.dataset.typeOperation;
+        // Формируем объект из введенных в поля данных, который будем отправлять на сервер
+        const financeFormDate = Object.fromEntries(new FormData(financeForm));
+        // Добавляем в сформированный объект поле type
+        financeFormDate.type = typeOperation;
+        console.log('financeFormDate: ', financeFormDate);
+
         // Получаем данные из поля "сумма" и проверяем на число ф-й convertStringNumber
         // Приводим число к натуральному с помощью Math.abs
         const changeAmount = Math.abs(convertStringNumber(financeForm.amount.value));
