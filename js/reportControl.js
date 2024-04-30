@@ -106,22 +106,32 @@ export const reportControl  = () => {
         if (targetSort) {
             // Создаем поле, по которому будем сортировать
             const sortField = targetSort.dataset.sort;
+            // Получаем дата-атрибут направления сортировки
             console.log(targetSort.dataset.sort);
             // Что бы не мутировать массив, делаем копию массива и его сортируем
             // Массив оборачиваем ф-й renderReport
             renderReport(
-                [...storage.data].sort((a,b) => {
+                [...storage.data].sort((a, b) => {
+                    // Проверяем направление сортировки
+                    if (targetSort.dataset.dir === 'up') {
+                        [a, b] = [b, a];
+                    }
                     // Если поле "Сумма"
                     if (sortField === 'amount') {
                         // То нужно привксти значения к числу и отсортировать их
-                        return parseFloat(a[sortField]) < parseFloat(b[sortField]) ? -1 : 1
+                        return parseFloat(a[sortField]) < parseFloat(b[sortField]) ? -1 : 1;
                     }
                     // Если нет, то выполняем простую сортировку
-                    return a[sortField] < b[sortField] ? -1 : 1
-                }
-                    
+                    return a[sortField] < b[sortField] ? -1 : 1;
+                } 
                 ),
             );
+
+            if (targetSort.dataset.dir === "up") {
+                    targetSort.dataset.dir = "down";
+            } else {
+                targetSort.dataset.dir = "up";
+            }
         }
         // Проверяем, кликнули ли мы на крестики для удаления
         const targetDel = target.closest("[data-del]")
