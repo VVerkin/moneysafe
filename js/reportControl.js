@@ -72,7 +72,7 @@ const renderReport = (data) => {
 
     // Формируем таблицу (перебираем операции и строим строки в таблице)
     // data.map принимает деструктурированный объект operation
-    const reportRows = data.map(({category, amount, description, date, type}) => {
+    const reportRows = data.map(({category, amount, description, date, type, id}) => {
         const reportRow = document.createElement('tr');
         reportRow.classList.add('report__row');
 
@@ -84,7 +84,7 @@ const renderReport = (data) => {
         <td class="report__cell">${typesOperation[type]}</td>
         <td class="report__action-cell">
             <button
-            class="report__button report__button_table">&#10006;</button>
+            class="report__button report__button_table" data-id=${id}>&#10006;</button>
         </td>
         `;
 
@@ -96,6 +96,11 @@ const renderReport = (data) => {
 
 
 export const reportControl  = () => {
+    // Навешиваем слушатель события для делегирования при нажатии на крестики
+    reportOperationList.addEventListener('click', ({target}) => {
+        console.log(target.dataset.id); // дз
+    })
+
     // Навешиваем событие на клик по кнопке "отчет"
     financeReport.addEventListener('click', async () => {
         const textContent = financeReport.textContent;
