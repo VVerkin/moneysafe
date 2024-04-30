@@ -2,7 +2,7 @@
 import { reformatDate } from './helpers.js';
 import { OverlayScrollbars } from './overlayscrollbars.esm.min.js';
 import { getData } from './service.js';
-
+import { storage } from './storage.js';
 
 // Получаем тип операции в виде объекта
 const typesOperation = {
@@ -16,6 +16,8 @@ const financeReport = document.querySelector('.finance__report');
 const report = document.querySelector('.report');
 // Получаем tbody по классу
 const reportOperationList = document.querySelector('.report__operation-list');
+// Получаем таблицу
+const reportTable = document.querySelector('.report__table');
 // Получаем форму с началом и концом даты
 const reportDates = document.querySelector('.report__dates');
 
@@ -84,7 +86,7 @@ const renderReport = (data) => {
         <td class="report__cell">${typesOperation[type]}</td>
         <td class="report__action-cell">
             <button
-            class="report__button report__button_table" data-id=${id}>&#10006;</button>
+            class="report__button report__button_table" data-del=${id}>&#10006;</button>
         </td>
         `;
 
@@ -96,9 +98,37 @@ const renderReport = (data) => {
 
 
 export const reportControl  = () => {
-    // Навешиваем слушатель события для делегирования при нажатии на крестики
-    reportOperationList.addEventListener('click', ({target}) => {
-        console.log(target.dataset.id); // дз
+    // Навешиваем слушатель события для делегирования 
+    reportTable.addEventListener('click', ({target}) => {
+        // Проверяем, кликнули ли мы на элементы с дата-атрибутами ля сортировки
+        const targetSort = target.closest('[data-sort]')
+        // Если да
+        if (targetSort) {
+            // Создаем поле, по которому будем сортировать
+            const sortField = targetSort.dataset.sort;
+            console.log(targetSort.dataset.sort);
+            // Что бы не мутировать массив, делаем копию массива и его сортируем
+            // Массив оборачиваем ф-й renderReport
+            renderReport(
+                [...storage.data].sort((a,b) => {
+                    // Если поле "Сумма"
+                    if (sortField === 'amount') {
+                        // То нужно привксти значения к числу и отсортировать их
+                        return parseFloat(a[sortField]) < parseFloat(b[sortField]) ? -1 : 1
+                    }
+                    // Если нет, то выполняем простую сортировку
+                    return a[sortField] < b[sortField] ? -1 : 1
+                }
+                    
+                ),
+            );
+        }
+        // Проверяем, кликнули ли мы на крестики для удаления
+        const targetDel = target.closest("[data-del]")
+        // Если да
+        if (targetDel) {
+            console.log(targetDel.dataset.del);
+        }
     })
 
     // Навешиваем событие на клик по кнопке "отчет"
@@ -110,6 +140,7 @@ export const reportControl  = () => {
         // Ф-я делает запрос к серверу
         // getData - асинхронная ф-я, поэтому нужно дождаться данных (пишем await)
         const data = await getData('/finance');
+        storage.data = data;
         financeReport.textContent = textContent;
         financeReport.disabled = false;
         // После получения данных с сервера вызовем ф-ю 
