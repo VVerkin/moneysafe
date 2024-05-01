@@ -11,6 +11,8 @@ const typesOperation = {
     expenses: 'Расход'
 };
 
+let actualData = [];
+
 // Получаем кнопку "отчет"
 const financeReport = document.querySelector('.finance__report');
 // Получаем отчет
@@ -21,6 +23,8 @@ const reportOperationList = document.querySelector('.report__operation-list');
 const reportTable = document.querySelector('.report__table');
 // Получаем форму с началом и концом даты
 const reportDates = document.querySelector('.report__dates');
+// Получим кнопку формирования графика
+const generateChartButton = document.querySelector('#generateChartButton');
 
 // Активируем скроллбары
 OverlayScrollbars(report, {});
@@ -143,7 +147,7 @@ export const reportControl  = () => {
             const reportRow = targetDel.closest('.report__row');
             reportRow.remove();
             financeControl();
-            // clearChart();
+            clearChart();
         }
     })
 
@@ -155,12 +159,12 @@ export const reportControl  = () => {
         financeReport.disabled = true;
         // Ф-я делает запрос к серверу
         // getData - асинхронная ф-я, поэтому нужно дождаться данных (пишем await)
-        const data = await getData('/finance');
+        actualData = await getData('/finance');
         storage.data = data;
         financeReport.textContent = textContent;
         financeReport.disabled = false;
         // После получения данных с сервера вызовем ф-ю 
-        renderReport(data);
+        renderReport(actualData);
         // Сначала получили все данные, затем открываем отчет
         openReport();
     });
@@ -184,7 +188,11 @@ export const reportControl  = () => {
 
         const url = queryString ? `/finance?${queryString}` : '/finance'
 
-        const data = await getData(url);
-        renderReport(data);
+        actualData = await getData(url);
+        renderReport(actualData);
     });
-}
+};
+
+generateChartButton.addEventListener('click', () => {
+    generateChart(data);
+})
