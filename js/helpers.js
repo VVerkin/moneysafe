@@ -26,7 +26,7 @@ export const animationNumber = (element, number) => {
     // Кол-во кадров в секунду
     const fps = 60;
     // Длительность анимации 1с
-    const duration = 2000;
+    const duration = 1000;
     // Длительность 1 кадра
     const frameDuration = duration / fps;
     // Кол-во кадров
@@ -40,21 +40,18 @@ export const animationNumber = (element, number) => {
     // Шаг анимации
     const increment = Math.trunc((number - initialNumber) / totalFrame);
 
-    // Сама анимация
-    const intervalId = setInterval(() => {
-        // Увеличиваем число анимаций
+    const animate = () => {
         currentFrame += 1;
-
         // Увеличиваем кадр на значение инкремента
         const newNumber = initialNumber + increment * currentFrame;
-
         element.textContent = `${newNumber.toLocaleString()} ₽`;
-
         // Останавливаем интервал
-        if (currentFrame === totalFrame) {
-            clearInterval(intervalId);
+        if (currentFrame < totalFrame) {
+            requestAnimationFrame(animate);
+        } else {
             element.textContent = `${number.toLocaleString()} ₽`;
         }
+    };
 
-    }, frameDuration);
+    requestAnimationFrame(animate);
 };
