@@ -32,8 +32,8 @@ const addNewOperation = async (e) => {
         if (typeOperation === 'expenses') {
             amount -= changeAmount;
         }
-        // Результат выводим с разделением тысяч и добавлением знака рубля
-        financeAmount.textContent = `${amount.toLocaleString()} ₽`;
+
+        animationNumber(financeAmount, amount);
         financeForm.reset();
     };
 
