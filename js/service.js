@@ -18,7 +18,7 @@ export const getData = async (url) => {
         console.error('Ошибка при получении данных', error);
         throw error;
     }
-}
+};
 
 export const postData = async (url, data) => {
     // Пишем конструкцию try-catch для защиты от ошибок
@@ -30,7 +30,7 @@ export const postData = async (url, data) => {
                 "Content-Type": 'application/json',
             },
             body: JSON.stringify(data),
-        })
+        });
         // Проверка на то, что данные не ок
         if (!response.ok) {
             // Создаем ошибку
@@ -42,5 +42,24 @@ export const postData = async (url, data) => {
         console.error('Ошибка при отправке данных', error);
         throw error;
     }
-}
+};
 
+export const delData = async (url) => {
+    // Пишем конструкцию try-catch для защиты от ошибок
+    try {
+        // Получаем данные, вторым параметром передаем настройки
+        const response = await fetch(`${API_URL}${url}`, {
+            method: 'DELETE',
+        });
+        // Проверка на то, что данные не ок
+        if (!response.ok) {
+            // Создаем ошибку
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        // Если все ок
+        return await response.json();
+    } catch (error) {
+        console.error('Ошибка при удалении данных', error);
+        throw error;
+    }
+};

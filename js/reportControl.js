@@ -1,7 +1,8 @@
 // Импортируем скроллбары
+import { financeControl } from './financeControl.js';
 import { reformatDate } from './helpers.js';
 import { OverlayScrollbars } from './overlayscrollbars.esm.min.js';
-import { getData } from './service.js';
+import { delData, getData } from './service.js';
 import { storage } from './storage.js';
 
 // Получаем тип операции в виде объекта
@@ -99,7 +100,7 @@ const renderReport = (data) => {
 
 export const reportControl  = () => {
     // Навешиваем слушатель события для делегирования 
-    reportTable.addEventListener('click', ({target}) => {
+    reportTable.addEventListener('click', async ({target}) => {
         // Проверяем, кликнули ли мы на элементы с дата-атрибутами ля сортировки
         const targetSort = target.closest('[data-sort]')
         // Если да
@@ -137,7 +138,12 @@ export const reportControl  = () => {
         const targetDel = target.closest("[data-del]")
         // Если да
         if (targetDel) {
-            console.log(targetDel.dataset.del);
+            await delData(`/finance/${targetDel.dataset.del}`)
+
+            const reportRow = targetDel.closest('.report__row');
+            reportRow.remove();
+            financeControl();
+            // clearChart();
         }
     })
 
