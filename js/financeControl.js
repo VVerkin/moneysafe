@@ -1,4 +1,4 @@
-import {convertStringNumber} from './helpers.js'; 
+import {animationNumber, convertStringNumber} from './helpers.js'; 
 import { getData, postData } from './service.js';
 
 // Получаем форму по классу
@@ -51,6 +51,8 @@ export const financeControl = async () => {
 
         return acc;
     }, 0);
+    // Запускаем ф-ю анимации из helpers.js
+    animationNumber(financeAmount, amount);
 
     financeAmount.textContent = `${amount.toLocaleString()} ₽`;
 // Ф-я выполняет добавление или уменьшение суммы при нажатии на "+" или "-"

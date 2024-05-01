@@ -182,5 +182,3 @@ export const reportControl  = () => {
         renderReport(data);
     });
 }
-
-
