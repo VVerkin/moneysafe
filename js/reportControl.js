@@ -1,5 +1,6 @@
 // Импортируем скроллбары
 import { financeControl } from './financeControl.js';
+import { generateChart } from './generateChart.js';
 import { reformatDate } from './helpers.js';
 import { OverlayScrollbars } from './overlayscrollbars.esm.min.js';
 import { delData, getData } from './service.js';
@@ -160,7 +161,7 @@ export const reportControl  = () => {
         // Ф-я делает запрос к серверу
         // getData - асинхронная ф-я, поэтому нужно дождаться данных (пишем await)
         actualData = await getData('/finance');
-        storage.data = data;
+        storage.data = actualData;
         financeReport.textContent = textContent;
         financeReport.disabled = false;
         // После получения данных с сервера вызовем ф-ю 
@@ -194,5 +195,5 @@ export const reportControl  = () => {
 };
 
 generateChartButton.addEventListener('click', () => {
-    generateChart(data);
+    generateChart(actualData);
 })
