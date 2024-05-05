@@ -1,6 +1,6 @@
 // Импортируем скроллбары
 import { financeControl } from './financeControl.js';
-import { generateChart } from './generateChart.js';
+import { generateChart, clearChart } from './generateChart.js';
 import { reformatDate } from './helpers.js';
 import { OverlayScrollbars } from './overlayscrollbars.esm.min.js';
 import { delData, getData } from './service.js';
@@ -191,6 +191,7 @@ export const reportControl  = () => {
 
         actualData = await getData(url);
         renderReport(actualData);
+        clearChart();
     });
 };
 
